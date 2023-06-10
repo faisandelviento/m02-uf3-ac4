@@ -16,7 +16,7 @@ def connectBD():
     db = mysql.connector.connect(
         host = "localhost",
         user = "root",
-        passwd = "claumestra",
+        passwd = "Princesa165",
         database = "users"
     )
     return db
@@ -56,10 +56,11 @@ def checkUser(user,password):
     bd=connectBD()
     cursor=bd.cursor()
 
-    query=f"SELECT user,name,surname1,surname2,age,genre FROM users WHERE user='{user}'\
-            AND password='{password}'"
+    query=f"SELECT user,name,surname1,surname2,age,genre FROM users WHERE user=s%\
+            AND password=s%"
+    values= (user,password)
     print(query)
-    cursor.execute(query)
+    cursor.execute(query,values)
     userData = cursor.fetchall()
     bd.close()
     
@@ -68,10 +69,46 @@ def checkUser(user,password):
     else:
         return userData[0]
 
+def UsuarioNoExiste(user):
+    bd=connectBD()
+    cursor=bd.cursor()
+    query=f"SELECT user FROM users WHERE user=%s;"
+    values= (user, )
+    print(query)
+    cursor.execute(query,values)
+    userData = cursor.fetchall()
+    bd.close()
+    if userData == []:
+        return True
+    else:
+        return False
+
 # cresteUser: crea un nuevo usuario en la BD
-def createUser(user,password,name,surname1,surname2,age,genre):
-    
-    return
+def createUser(user,password,name,surname1,surname2,age,genre): ###Cristina
+    ##comprobar usuario no esta en uso aun
+    if(UsuarioNoExiste(user)):
+        bd=connectBD()
+        cursor=bd.cursor()
+        ##insertar datos en BD
+        query=f"INSERT INTO users VALUES (%s,%s,%s,%s,%s,%s,%s);"
+        print(query)
+        values= (user,password,name,surname1,surname2,age,genre)
+        cursor.execute(query,values)
+        ##commit para que los datos de la BD se actualicen antes de hacer siguiente consulta
+        bd.commit() 
+
+        #comprobamos que user existe en BD y seleccionamos los datos
+        query2= f"SELECT user,name,surname1,surname2,age,genre FROM users WHERE user=%s"
+        values2= (user, )
+        cursor.execute(query2,values2)
+        userData = cursor.fetchall()
+        bd.close()
+        if userData == []:
+            return False #"El usuario no se ha podido registrar"
+        else:
+            return userData[0]
+    else:
+        return False #"este nombre de usuario ya existe"
 
 # Secuencia principal: configuración de la aplicación web ##########################################
 # Instanciación de la aplicación web Flask
@@ -89,7 +126,26 @@ def login():
 
 @app.route("/signin")
 def signin():
-    return "SIGN IN PAGE"
+    return render_template("signin.html")
+
+@app.route("/newUser",methods=('GET', 'POST'))
+def newUser():
+    print("LLEGAMOS A NEW USER")
+    if request.method == ('POST'):
+        formData = request.form
+        user=formData['user']
+        password=formData['password']
+        name=formData['name']
+        surname1=formData['surname1']
+        surname2=formData['surname2']
+        age=formData['age']
+        genre=formData['genre']
+        userData = createUser(user,password,name,surname1,surname2,age,genre)
+
+        if userData == False:
+            return render_template("signinresults.html",login=False)
+        else:
+            return render_template("signinresults.html",login=True,userData=userData)
 
 @app.route("/results",methods=('GET', 'POST'))
 def results():

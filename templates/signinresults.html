@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles.css')}}" />
+    <title>Login</title>
+</head>
+<body>
+    <header>
+        <h1>Aplicació web amb base de dades (M02-UF3-AC4)</h1>
+    </header>
+    <main>
+        {% if login %}
+        <p class="login_ok">USUARIO CREADO CORRECTAMENTE</p>
+        <table>
+            <tr>
+                <th>User</th>
+                <th>Name</th>
+                <th>Surname 1</th>
+                <th>Surname 2</th>
+                <th>Age</th>
+                <th>Genre</th>
+            </tr>
+            <tr>
+                <td>{{userData[0]}}</td>
+                <td>{{userData[1]}}</td>
+                <td>{{userData[2]}}</td>
+                <td>{{userData[3]}}</td>
+                <td>{{userData[4]}}</td>
+                <td>{{userData[5]}}</td>
+            </tr>
+        </table>
+        {% else %}
+        <p class="login_ko">NO SE HA PODIDO CREAR EL USUARIO</p>
+        {% endif %}
+    </main>
+    <footer>
+        <p>ETPX 2022-2023</p>
+    </footer>
+</body>
+</html>

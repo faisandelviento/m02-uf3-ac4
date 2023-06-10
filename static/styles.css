@@ -19,6 +19,7 @@ html, body{
 }
 
 /* Layout styles (apply to all pages */
+
 body{
     display: flex;
     flex-direction: column;
@@ -87,6 +88,7 @@ button.signin:hover{
 }
 
 /* Login page styles */
+
 .formulario{
     display: flex;
     flex-direction: column;
@@ -94,6 +96,10 @@ button.signin:hover{
     width: 60vw;
     height: auto;
     align-items: center;
+}
+
+select{
+    width: 80%;
 }
 
 .formulario input{
